@@ -2,8 +2,9 @@
 
 #include <iostream>
 #include <fstream>
+#include <sstream>
 
-GLuint Utils::createShaderProgram(const char* vertexSource, const char* fragmentSource)
+GLuint Util::createShaderProgram(const char* vertexSource, const char* fragmentSource)
 {
     GLint vertexCompiled, fragmentCompiled;
     GLint linked;
@@ -57,22 +58,44 @@ GLuint Utils::createShaderProgram(const char* vertexSource, const char* fragment
     return vfProgramID;
 }
 
-std::string Utils::readShaderSource(const char* filePath)
+std::string Util::readShaderSource(const std::string& filePath)
 {
-    std::string content, line = "";
-    std::ifstream fileStream(filePath, std::ios::in);
-
-    while (fileStream.eof())
+    std::ifstream shaderFile(filePath);
+    if (!shaderFile.is_open())
     {
-        std::getline(fileStream, line);
-        content.append(line + '\n');
+        std::cerr << "Failed to open shader file: " << filePath << std::endl;
+        return "";
     }
 
-    fileStream.close();
-    return content;
+    std::stringstream buffer;
+    buffer << shaderFile.rdbuf();
+    std::string source = buffer.str();
+
+    if (source.empty())
+    {
+        std::cerr << "Shader file empty!" << std::endl;
+    }
+
+    shaderFile.close();
+    return source;
 }
 
-void Utils::printShaderLog(GLuint shader)
+// std::string Util::readShaderSource(const char* filePath)
+// {
+//     std::string content, line = "";
+//     std::ifstream fileStream(filePath, std::ios::in);
+
+//     while (fileStream.eof())
+//     {
+//         std::getline(fileStream, line);
+//         content.append(line + '\n');
+//     }
+
+//     fileStream.close();
+//     return content;
+// }
+
+void Util::printShaderLog(GLuint shader)
 {
     int length = 0;
     int charWritten = 0;
@@ -89,7 +112,7 @@ void Utils::printShaderLog(GLuint shader)
     }
 }
 
-void Utils::printProgramLog(int program)
+void Util::printProgramLog(int program)
 {
     int length = 0;
     int charWritten = 0;
@@ -106,7 +129,7 @@ void Utils::printProgramLog(int program)
     }
 }
 
-bool Utils::checkOpenGLError()
+bool Util::checkOpenGLError()
 {
     bool foundError = false;
     int glError = glGetError();
