@@ -20,7 +20,7 @@ add_executable(${PROJECT_NAME} src/main.cpp)
 # Link the lib modules to the main executable
 target_link_libraries(${PROJECT_NAME}
     Core
-    Render
+    Renderer
     Util
 
     GLEW::GLEW
@@ -32,6 +32,6 @@ target_link_libraries(${PROJECT_NAME}
 # Include headers dir
 target_include_directories(${PROJECT_NAME} PRIVATE
     src/core
-    src/render
+    src/renderer
     src/util
 )
