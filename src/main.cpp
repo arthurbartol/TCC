@@ -107,7 +107,7 @@ void processInput(GLFWwindow* pWindow)
 
 void init(GLFWwindow* pWindow)
 {
-    renderingProgram = Utils::createShaderProgram("shaders/vertex.glsl", "shaders/fragment.glsl");
+    renderingProgram = Util::createShaderProgram("../src/shaders/vertex.glsl", "../src/shaders/fragment.glsl");
 
     glGenVertexArrays(NUM_VAOs, vaos);
     glBindVertexArray(vaos[0]);
