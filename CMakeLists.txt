@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 add_subdirectory(src/core)
-add_subdirectory(src/render)
+add_subdirectory(src/renderer)
 add_subdirectory(src/util)
 
 find_package(GLEW REQUIRED)
