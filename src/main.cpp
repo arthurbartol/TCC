@@ -1,7 +1,7 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
-#include "util/Utils.h"
+#include "util/Util.h"
 
 #include <iostream>
 #include <fstream>
