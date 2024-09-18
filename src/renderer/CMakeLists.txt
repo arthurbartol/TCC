@@ -4,9 +4,9 @@ file (GLOB_RECURSE RENDERER_SOURCES "*.cpp" "*.h")
 
 add_library(Renderer ${RENDERER_SOURCES})
 
-target_include_directories(Render PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(Renderer PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
-target_link_libraries(Render PUBLIC
+target_link_libraries(Renderer PUBLIC
     GLEW::GLEW
     glfw
     OpenGL::GL
