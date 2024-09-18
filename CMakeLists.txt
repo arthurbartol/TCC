@@ -5,20 +5,33 @@ project(TCC)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-file(GLOB_RECURSE SOURCES src/*.cpp)
-
-add_executable(${PROJECT_NAME} ${SOURCES})
+add_subdirectory(src/core)
+add_subdirectory(src/render)
+add_subdirectory(src/util)
 
 find_package(GLEW REQUIRED)
 find_package(glfw3 REQUIRED)
 find_package(OpenGL REQUIRED)
 find_package(glm REQUIRED)
 
-# target_include_directories(${PROJECT_NAME} PRIVATE ${PROJECT_SOURCE_DIR}/src/include)
+# Add the main executable
+add_executable(${PROJECT_NAME} src/main.cpp)
 
+# Link the lib modules to the main executable
 target_link_libraries(${PROJECT_NAME}
+    Core
+    Render
+    Util
+
     GLEW::GLEW
     glfw
     OpenGL::GL
     glm::glm
+)
+
+# Include headers dir
+target_include_directories(${PROJECT_NAME} PRIVATE
+    src/core
+    src/render
+    src/util
 )
