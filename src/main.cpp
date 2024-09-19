@@ -12,16 +12,16 @@
 #include <string>
 #include <vector>
 
-void framebufferSizeCallback(GLFWwindow* pWindow, int width, int height)
+void framebufferSizeCallback(GLFWwindow* window, int width, int height)
 {
     glViewport(0, 0, width, height);
 }
 
-void processInput(GLFWwindow* pWindow)
+void processInput(GLFWwindow* window)
 {
-    if (glfwGetKey(pWindow, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
     {
-        glfwSetWindowShouldClose(pWindow, true);
+        glfwSetWindowShouldClose(window, true);
     }
 }
 
@@ -66,7 +66,7 @@ void setupVertices()
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertexPositions), vertexPositions, GL_STATIC_DRAW);
 }
 
-void init(GLFWwindow* pWindow)
+void init(GLFWwindow* window)
 {
     renderingProgram = Util::createShaderProgram("../src/shaders/vertex.glsl", "../src/shaders/fragment.glsl");
 
@@ -81,7 +81,7 @@ void init(GLFWwindow* pWindow)
     setupVertices();
 }
 
-void display(GLFWwindow* pWindow, double currentTime)
+void display(GLFWwindow* window, double currentTime)
 {
     glClear(GL_DEPTH_BUFFER_BIT);
     // glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -94,7 +94,7 @@ void display(GLFWwindow* pWindow, double currentTime)
     mvLocation = glGetUniformLocation(renderingProgram, "mvMatrix");
 
     // Build perspective matrix
-    glfwGetFramebufferSize(pWindow, &width, &height);
+    glfwGetFramebufferSize(window, &width, &height);
     aspectRatio = (float)width / (float)height;
     pMatrix = glm::perspective(1.0472f, aspectRatio, 0.1f, 1000.0f);    // 1.0472 radians = 60 degrees
 
@@ -146,8 +146,8 @@ int main()
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    GLFWwindow* pWindow = glfwCreateWindow(600, 600, "TCC", nullptr, nullptr);
-    if (!pWindow)
+    GLFWwindow* window = glfwCreateWindow(600, 600, "TCC", nullptr, nullptr);
+    if (!window)
     {
         const char* description = nullptr;
         int code = glfwGetError(&description);
@@ -158,7 +158,7 @@ int main()
         exit(EXIT_FAILURE);
     }
 
-    glfwMakeContextCurrent(pWindow);
+    glfwMakeContextCurrent(window);
 
     GLenum glewStatus = glewInit();
     if (glewStatus != GLEW_OK)
@@ -178,23 +178,23 @@ int main()
 
     // Register a callback function on the window that
     // gets called each time the window is resized.
-    glfwSetFramebufferSizeCallback(pWindow, framebufferSizeCallback);
+    glfwSetFramebufferSizeCallback(window, framebufferSizeCallback);
 
     glfwSwapInterval(1);
 
-    init(pWindow);
+    init(window);
 
-    while (!glfwWindowShouldClose(pWindow))
+    while (!glfwWindowShouldClose(window))
     {
-        processInput(pWindow);
+        processInput(window);
 
-        display(pWindow, glfwGetTime());
+        display(window, glfwGetTime());
 
-        glfwSwapBuffers(pWindow);
+        glfwSwapBuffers(window);
         glfwPollEvents();
     }
 
-    glfwDestroyWindow(pWindow);
+    glfwDestroyWindow(window);
     
     glfwTerminate();
     exit(EXIT_SUCCESS);
