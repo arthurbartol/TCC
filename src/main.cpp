@@ -42,7 +42,7 @@ glm::mat4 pMatrix, vMatrix, mMatrix, mvMatrix, tMatrix, rMatrix;
 
 void setupVertices()
 {
-    // 36 vertices,12 triangles, makes 2x2x2 cube placed at origin
+    // 36 vertices, 12 triangles, makes 2x2x2 cube placed at origin
     float vertexPositions[108] = {
         -1.0f,  1.0f, -1.0f, -1.0f, -1.0f, -1.0f,  1.0f, -1.0f, -1.0f,
          1.0f, -1.0f, -1.0f,  1.0f,  1.0f, -1.0f, -1.0f,  1.0f, -1.0f,
