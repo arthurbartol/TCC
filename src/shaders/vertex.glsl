@@ -47,8 +47,8 @@ mat4 buildTranslate(float x, float y, float z)
 
 void main()
 {
-    float id = gl_InstanceID + timeFactor;  // value based on time factor, but different for each cube instance
-    float a = sin(203.0 * id / 8000.0) * 403.0;          // these are the x, y and z components for the translation below
+    float id = gl_InstanceID + timeFactor;          // value based on time factor, but different for each cube instance
+    float a = sin(203.0 * id / 8000.0) * 403.0;     // these are the x, y and z components for the translation below
     float b = cos(301.0 * id / 4001.0) * 401.0;
     float c = sin(400.0 * id / 6003.0) * 405.0;
 
