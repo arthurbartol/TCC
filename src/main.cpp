@@ -98,34 +98,40 @@ void display(GLFWwindow* pWindow, double currentTime)
     aspectRatio = (float)width / (float)height;
     pMatrix = glm::perspective(1.0472f, aspectRatio, 0.1f, 1000.0f);    // 1.0472 radians = 60 degrees
 
-    // Use current time to compute different translations in x, y and z
-    tMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(std::sin(0.35f * currentTime) * 2.0f,
-                                                        std::cos(0.52f * currentTime) * 2.0f,
-                                                        std::sin(0.70f * currentTime) * 2.0f));
-    rMatrix = glm::rotate(glm::mat4(1.0f), 1.75f * (float)currentTime, glm::vec3(0.0f, 1.0f, 0.0f));    //
-    rMatrix = glm::rotate(rMatrix, 1.75f * (float)currentTime, glm::vec3(1.0f, 0.0f, 0.0f));            // the 1.75 adjusts the rotation speed
-    rMatrix = glm::rotate(rMatrix, 1.75f * (float)currentTime, glm::vec3(0.0f, 0.0f, 1.0f));            //
+    float timeFactor = 0.0f;
+    for (int i = 0; i < 24; i++)
+    {
+        timeFactor = currentTime + i;
+        
+        // Use current time to compute different translations in x, y and z
+        tMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(std::sin(0.35f * timeFactor) * 8.0f,
+                                                            std::cos(0.52f * timeFactor) * 8.0f,
+                                                            std::sin(0.70f * timeFactor) * 8.0f));
+        rMatrix = glm::rotate(glm::mat4(1.0f), 1.75f * (float)currentTime, glm::vec3(0.0f, 1.0f, 0.0f));    //
+        rMatrix = glm::rotate(rMatrix, 1.75f * (float)currentTime, glm::vec3(1.0f, 0.0f, 0.0f));            // the 1.75 adjusts the rotation speed
+        rMatrix = glm::rotate(rMatrix, 1.75f * (float)currentTime, glm::vec3(0.0f, 0.0f, 1.0f));            //
 
-    mMatrix = tMatrix * rMatrix;
+        mMatrix = tMatrix * rMatrix;
 
-    // Build view, model and model-view matrix
-    vMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(-cameraX, -cameraY, -cameraZ));
-    // mMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(cubeLocationX, cubeLocationY, cubeLocationZ));
-    mvMatrix = vMatrix * mMatrix;
+        // Build view, model and model-view matrix
+        vMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(-cameraX, -cameraY, -cameraZ));
+        // mMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(cubeLocationX, cubeLocationY, cubeLocationZ));
+        mvMatrix = vMatrix * mMatrix;
 
-    // Copy perspective and model-view matrices to corresponding uniform variables
-    glUniformMatrix4fv(pLocation, 1, GL_FALSE, glm::value_ptr(pMatrix));
-    glUniformMatrix4fv(mvLocation, 1, GL_FALSE, glm::value_ptr(mvMatrix));
+        // Copy perspective and model-view matrices to corresponding uniform variables
+        glUniformMatrix4fv(pLocation, 1, GL_FALSE, glm::value_ptr(pMatrix));
+        glUniformMatrix4fv(mvLocation, 1, GL_FALSE, glm::value_ptr(mvMatrix));
 
-    // Associate VBO with the corresponding vertex attribute in the vertex shader
-    glBindBuffer(GL_ARRAY_BUFFER, vbos[0]);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
-    glEnableVertexAttribArray(0);
+        // Associate VBO with the corresponding vertex attribute in the vertex shader
+        glBindBuffer(GL_ARRAY_BUFFER, vbos[0]);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+        glEnableVertexAttribArray(0);
 
-    // Adjust OpenGL settings and draw model
-    glEnable(GL_DEPTH_TEST);
-    glDepthFunc(GL_LEQUAL);
-    glDrawArrays(GL_TRIANGLES, 0, 36);
+        // Adjust OpenGL settings and draw model
+        glEnable(GL_DEPTH_TEST);
+        glDepthFunc(GL_LEQUAL);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+    }
 }
 
 int main()
