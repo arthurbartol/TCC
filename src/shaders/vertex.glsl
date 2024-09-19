@@ -1,10 +1,14 @@
 #version 420
 
-uniform float offset;
+layout (location = 0) in vec3 position;
+
+uniform mat4 pMatrix;
+uniform mat4 mvMatrix;
+
+out vec4 varyingColor;
 
 void main()
 {
-    if      (gl_VertexID == 0) gl_Position = vec4( 0.25 + offset, -0.25, 0.0, 1.0);
-    else if (gl_VertexID == 1) gl_Position = vec4(-0.25 + offset, -0.25, 0.0, 1.0);
-    else                       gl_Position = vec4( 0.25 + offset,  0.25, 0.0, 1.0);
+    gl_Position = pMatrix * mvMatrix * vec4(position, 1.0f);
+    varyingColor = vec4(position, 1.0f) * 0.5f + vec4(0.5f, 0.5f, 0.5f, 0.5f);
 }
