@@ -90,7 +90,7 @@ int main()
 
     std::clog << "Renderer: " << renderer << std::endl;
     std::clog << "OpenGL version supported: " << version << std::endl;
-    std::cout << std::endl;
+    std::clog << std::endl;
 
     // Register a callback function on the window that
     // gets called each time the window is resized.
