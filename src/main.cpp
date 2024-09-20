@@ -11,6 +11,7 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include <stack>
 
 void framebufferSizeCallback(GLFWwindow* window, int width, int height)
 {
@@ -40,6 +41,8 @@ GLuint mvLocation, pLocation, vLocation;
 int width, height;
 float aspectRatio;
 glm::mat4 pMatrix, vMatrix, mMatrix, mvMatrix, tMatrix, rMatrix;
+
+std::stack<glm::mat4> mvStack;
 
 void setupVertices()
 {
@@ -90,11 +93,11 @@ void init(GLFWwindow* window)
     cameraZ = 8.0f;
 
     cubeLocationX =  0.0f;
-    cubeLocationY = 2.0f;
-    cubeLocationZ =  0.0f;  // shift down Y to reveal perspective
+    cubeLocationY = -2.0f;  // shift down Y to reveal perspective
+    cubeLocationZ =  0.0f;
 
-    pyramidLocationX = 2.0f;
-    pyramidLocationY = -2.0f;
+    pyramidLocationX = 0.0f;
+    pyramidLocationY = 2.0f;
     pyramidLocationZ = 0.0f;
 
     setupVertices();
@@ -121,41 +124,27 @@ void display(GLFWwindow* window, double currentTime)
     tMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(std::sin(0.35f * currentTime) * 8.0f,
                                                         std::cos(0.52f * currentTime) * 8.0f,
                                                         std::sin(0.70f * currentTime) * 8.0f));
-    rMatrix = glm::rotate(glm::mat4(1.0f), 1.75f * (float)currentTime, glm::vec3(0.0f, 1.0f, 0.0f));    //
-    rMatrix = glm::rotate(        rMatrix, 1.75f * (float)currentTime, glm::vec3(1.0f, 0.0f, 0.0f));    // the 1.75 adjusts the rotation speed
-    rMatrix = glm::rotate(        rMatrix, 1.75f * (float)currentTime, glm::vec3(0.0f, 0.0f, 1.0f));    //
+    rMatrix = glm::rotate(glm::mat4(1.0f), 1.75f * (float)currentTime, glm::vec3(0.0f, 1.0f, 0.0f));    // the 1.75
+    rMatrix = glm::rotate(        rMatrix, 1.75f * (float)currentTime, glm::vec3(1.0f, 0.0f, 0.0f));    // adjusts the
+    rMatrix = glm::rotate(        rMatrix, 1.75f * (float)currentTime, glm::vec3(0.0f, 0.0f, 1.0f));    // rotation speed
 
     mMatrix = tMatrix * rMatrix;
 
     // The view matrix is computed once and used for both objects.
     vMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(-cameraX, -cameraY, -cameraZ));
+    mvStack.push(vMatrix);
 
-    // Draw the cube.
-    mMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(cubeLocationX, cubeLocationY, cubeLocationZ));
-    mvMatrix = vMatrix * mMatrix;
+    //---------------------- pyramid == sun ----------------------
+    mvStack.push(mvStack.top());
+    mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));                  // sun position
 
-    // Computations that build (and transform) mMatrix have been moved to othe vertex shader.
-    // There is no longer any need to build a model-view matrix in the C++ application.
-    glUniformMatrix4fv(mvLocation, 1, GL_FALSE, glm::value_ptr(mvMatrix));
+    mvStack.push(mvStack.top());
+    mvStack.top() *= glm::rotate(glm::mat4(1.0f), (float)currentTime, glm::vec3(1.0f, 0.0f, 0.0f)); // sun rotation
+
+    glUniformMatrix4fv(mvLocation, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
     glUniformMatrix4fv(pLocation, 1, GL_FALSE, glm::value_ptr(pMatrix));
-
-    // Associate VBO with the corresponding vertex attribute in the vertex shader.
-    glBindBuffer(GL_ARRAY_BUFFER, vbos[0]); 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
-    glEnableVertexAttribArray(0);
-
-    glEnable(GL_DEPTH_TEST);
-    glDepthFunc(GL_LEQUAL);
-    glDrawArrays(GL_TRIANGLES, 0, 36);
-
-    // Draw the pyramid.
-    mMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(pyramidLocationX, pyramidLocationY, pyramidLocationZ));
-    mvMatrix = vMatrix * mMatrix;
-
-    glUniformMatrix4fv(mvLocation, 1, GL_FALSE, glm::value_ptr(mvMatrix));
-    glUniformMatrix4fv(pLocation, 1, GL_FALSE, glm::value_ptr(pMatrix));
-
     glBindBuffer(GL_ARRAY_BUFFER, vbos[1]);
+
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
     glEnableVertexAttribArray(0);
 
@@ -163,6 +152,60 @@ void display(GLFWwindow* window, double currentTime)
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LEQUAL);
     glDrawArrays(GL_TRIANGLES, 0, 18);
+
+    mvStack.pop();  // remove the sun's axial rotation from the stack
+
+    //---------------------- cube == planet ----------------------
+    mvStack.push(mvStack.top());
+    mvStack.top() *= glm::translate(
+        glm::mat4(1.0f),
+        glm::vec3(
+            std::sin((float)currentTime) * 4.0f,
+            0.0f,
+            std::cos((float)currentTime) * 4.0f
+        )
+    );
+
+    mvStack.push(mvStack.top());
+    mvStack.top() *= glm::rotate(glm::mat4(1.0f), (float)currentTime, glm::vec3(0.0f, 1.0f, 0.0f)); // planet rotation
+
+    glUniformMatrix4fv(mvLocation, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
+    glUniformMatrix4fv(pLocation, 1, GL_FALSE, glm::value_ptr(pMatrix));
+    glBindBuffer(GL_ARRAY_BUFFER, vbos[0]);
+
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(0);
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+
+    mvStack.pop();  // remove the planet's axial rotation from the stack
+
+    //---------------------- smaller cube == moon ----------------------
+    mvStack.push(mvStack.top());
+    mvStack.top() *= glm::translate(
+        glm::mat4(1.0f),
+        glm::vec3(
+            0.0f,
+            std::sin((float)currentTime) * 2.0f,
+            std::cos((float)currentTime) * 2.0f
+        )
+    );
+    mvStack.top() *= glm::rotate(glm::mat4(1.0f), (float)currentTime, glm::vec3(0.0f, 0.0f, 1.0f)); // moon rotation
+    mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(0.25f, 0.25f, 0.25f));                   // make the moon smaller
+
+    glUniformMatrix4fv(mvLocation, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
+    glUniformMatrix4fv(pLocation, 1, GL_FALSE, glm::value_ptr(pMatrix));
+    glBindBuffer(GL_ARRAY_BUFFER, vbos[0]);
+
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(0);
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+
+    // Remove moon scale/rotation/position, planet position,
+    // sun position, and view matrices from stack.
+    mvStack.pop();
+    mvStack.pop();
+    mvStack.pop();
+    mvStack.pop();
 }
 
 int main()
