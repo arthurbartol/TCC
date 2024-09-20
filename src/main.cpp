@@ -44,6 +44,78 @@ glm::mat4 pMatrix, vMatrix, mMatrix, mvMatrix, tMatrix, rMatrix;
 
 std::stack<glm::mat4> mvStack;
 
+void setupVertices();
+
+void init(GLFWwindow* window);
+void display(GLFWwindow* window, double currentTime);
+
+int main()
+{
+    if (!glfwInit())
+    {
+        std::cerr << "Failed to initialize GLFW" << std::endl;
+        exit(EXIT_FAILURE);
+    }
+
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
+    GLFWwindow* window = glfwCreateWindow(600, 600, "TCC", nullptr, nullptr);
+    if (!window)
+    {
+        const char* description = nullptr;
+        int code = glfwGetError(&description);
+
+        std::cerr << "Failed to create a GLFW window" << std::endl;
+
+        glfwTerminate();
+        exit(EXIT_FAILURE);
+    }
+
+    glfwMakeContextCurrent(window);
+
+    GLenum glewStatus = glewInit();
+    if (glewStatus != GLEW_OK)
+    {
+        std::cerr << "Failed to initialize GLEW: " << glewGetErrorString(glewStatus) << std::endl;
+        
+        glfwTerminate();
+        exit(EXIT_FAILURE);
+    }
+
+    // Check OpenGL version and renderer.
+    const GLubyte* renderer = glGetString(GL_RENDERER);
+    const GLubyte* version = glGetString(GL_VERSION);
+
+    std::clog << "Renderer: " << renderer << std::endl;
+    std::clog << "OpenGL version supported: " << version << std::endl;
+    std::cout << std::endl;
+
+    // Register a callback function on the window that
+    // gets called each time the window is resized.
+    glfwSetFramebufferSizeCallback(window, framebufferSizeCallback);
+
+    glfwSwapInterval(1);
+
+    init(window);
+
+    while (!glfwWindowShouldClose(window))
+    {
+        processInput(window);
+
+        display(window, glfwGetTime());
+
+        glfwSwapBuffers(window);
+        glfwPollEvents();
+    }
+
+    glfwDestroyWindow(window);
+    
+    glfwTerminate();
+    exit(EXIT_SUCCESS);
+}
+
 void setupVertices()
 {
     // 36 vertices, 12 triangles, makes 2x2x2 cube placed at origin.
@@ -206,71 +278,4 @@ void display(GLFWwindow* window, double currentTime)
     mvStack.pop();
     mvStack.pop();
     mvStack.pop();
-}
-
-int main()
-{
-    if (!glfwInit())
-    {
-        std::cerr << "Failed to initialize GLFW" << std::endl;
-        exit(EXIT_FAILURE);
-    }
-
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
-    GLFWwindow* window = glfwCreateWindow(600, 600, "TCC", nullptr, nullptr);
-    if (!window)
-    {
-        const char* description = nullptr;
-        int code = glfwGetError(&description);
-
-        std::cerr << "Failed to create a GLFW window" << std::endl;
-
-        glfwTerminate();
-        exit(EXIT_FAILURE);
-    }
-
-    glfwMakeContextCurrent(window);
-
-    GLenum glewStatus = glewInit();
-    if (glewStatus != GLEW_OK)
-    {
-        std::cerr << "Failed to initialize GLEW: " << glewGetErrorString(glewStatus) << std::endl;
-        
-        glfwTerminate();
-        exit(EXIT_FAILURE);
-    }
-
-    // Check OpenGL version and renderer.
-    const GLubyte* renderer = glGetString(GL_RENDERER);
-    const GLubyte* version = glGetString(GL_VERSION);
-
-    std::clog << "Renderer: " << renderer << std::endl;
-    std::clog << "OpenGL version supported: " << version << std::endl;
-    std::cout << std::endl;
-
-    // Register a callback function on the window that
-    // gets called each time the window is resized.
-    glfwSetFramebufferSizeCallback(window, framebufferSizeCallback);
-
-    glfwSwapInterval(1);
-
-    init(window);
-
-    while (!glfwWindowShouldClose(window))
-    {
-        processInput(window);
-
-        display(window, glfwGetTime());
-
-        glfwSwapBuffers(window);
-        glfwPollEvents();
-    }
-
-    glfwDestroyWindow(window);
-    
-    glfwTerminate();
-    exit(EXIT_SUCCESS);
 }
