@@ -26,8 +26,8 @@ GLuint vbos[NUM_VBOs];
 GLuint renderingProgram;
 
 float cameraX, cameraY, cameraZ;
-float cubeLocationX, cubeLocationY, cubeLocationZ;
-float pyramidLocationX, pyramidLocationY, pyramidLocationZ;
+// float cubeLocationX, cubeLocationY, cubeLocationZ;
+// float pyramidLocationX, pyramidLocationY, pyramidLocationZ;
 
 GLuint mvLocation, pLocation, vLocation;
 int width, height;
@@ -177,13 +177,13 @@ void init(GLFWwindow* window)
     cameraY = 0.0f;
     cameraZ = 8.0f;
 
-    cubeLocationX =  0.0f;
-    cubeLocationY = -2.0f;  // shift down Y to reveal perspective
-    cubeLocationZ =  0.0f;
+    // cubeLocationX =  0.0f;
+    // cubeLocationY = -2.0f;  // shift down Y to reveal perspective
+    // cubeLocationZ =  0.0f;
 
-    pyramidLocationX = 0.0f;
-    pyramidLocationY = 2.0f;
-    pyramidLocationZ = 0.0f;
+    // pyramidLocationX = 0.0f;
+    // pyramidLocationY = 2.0f;
+    // pyramidLocationZ = 0.0f;
 
     setupVertices();
 
@@ -205,98 +205,20 @@ void display(GLFWwindow* window, double currentTime)
     vLocation = glGetUniformLocation(renderingProgram, "vMatrix");
 
     // Use current time to compute different translations in x, y and z.
-    tMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(std::sin(0.35f * currentTime) * 8.0f,
-                                                        std::cos(0.52f * currentTime) * 8.0f,
-                                                        std::sin(0.70f * currentTime) * 8.0f));
-    rMatrix = glm::rotate(glm::mat4(1.0f), 1.75f * (float)currentTime, glm::vec3(0.0f, 1.0f, 0.0f));    // the 1.75
-    rMatrix = glm::rotate(        rMatrix, 1.75f * (float)currentTime, glm::vec3(1.0f, 0.0f, 0.0f));    // adjusts the
-    rMatrix = glm::rotate(        rMatrix, 1.75f * (float)currentTime, glm::vec3(0.0f, 0.0f, 1.0f));    // rotation speed
+    // tMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(std::sin(0.35f * currentTime) * 8.0f,
+    //                                                     std::cos(0.52f * currentTime) * 8.0f,
+    //                                                     std::sin(0.70f * currentTime) * 8.0f));
+    // rMatrix = glm::rotate(glm::mat4(1.0f), 1.75f * (float)currentTime, glm::vec3(0.0f, 1.0f, 0.0f));    // the 1.75
+    // rMatrix = glm::rotate(        rMatrix, 1.75f * (float)currentTime, glm::vec3(1.0f, 0.0f, 0.0f));    // adjusts the
+    // rMatrix = glm::rotate(        rMatrix, 1.75f * (float)currentTime, glm::vec3(0.0f, 0.0f, 1.0f));    // rotation speed
 
-    mMatrix = tMatrix * rMatrix;
+    // mMatrix = tMatrix * rMatrix;
 
     // The view matrix is computed once and used for both objects.
     vMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(-cameraX, -cameraY, -cameraZ));
     mvStack.push(vMatrix);
 
     glEnable(GL_CULL_FACE);
-
-    //---------------------- pyramid == sun ----------------------
-    // mvStack.push(mvStack.top());
-    // mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));  // sun position
-
-    // mvStack.push(mvStack.top());
-    // mvStack.top() *= glm::rotate(glm::mat4(1.0f), (float)currentTime, glm::vec3(1.0f, 0.0f, 0.0f)); // sun rotation
-
-    // glUniformMatrix4fv(mvLocation, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
-    // glUniformMatrix4fv(pLocation, 1, GL_FALSE, glm::value_ptr(pMatrix));
-    // glBindBuffer(GL_ARRAY_BUFFER, vbos[1]);
-
-    // glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
-    // glEnableVertexAttribArray(0);
-
-    // // Adjust OpenGL settings and draw model.
-    // glEnable(GL_DEPTH_TEST);
-    // glDepthFunc(GL_LEQUAL);
-    // glFrontFace(GL_CCW); // counter-clockwise winding order
-    // glDrawArrays(GL_TRIANGLES, 0, 18);
-
-    // mvStack.pop();  // remove the sun's axial rotation from the stack
-
-    // //---------------------- cube == planet ----------------------
-    // mvStack.push(mvStack.top());
-    // mvStack.top() *= glm::translate(
-    //     glm::mat4(1.0f),
-    //     glm::vec3(
-    //         std::sin((float)currentTime) * 4.0f,
-    //         0.0f,
-    //         std::cos((float)currentTime) * 4.0f
-    //     )
-    // );
-
-    // mvStack.push(mvStack.top());
-    // mvStack.top() *= glm::rotate(glm::mat4(1.0f), (float)currentTime, glm::vec3(0.0f, 1.0f, 0.0f)); // planet rotation
-
-    // glUniformMatrix4fv(mvLocation, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
-    // glUniformMatrix4fv(pLocation, 1, GL_FALSE, glm::value_ptr(pMatrix));
-    // glBindBuffer(GL_ARRAY_BUFFER, vbos[0]);
-
-    // glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
-    // glEnableVertexAttribArray(0);
-
-    // glEnable(GL_DEPTH_TEST);
-    // glDepthFunc(GL_LEQUAL);
-    // glFrontFace(GL_CW); // clockwise winding order
-    // glDrawArrays(GL_TRIANGLES, 0, 36);
-
-    // mvStack.pop();  // remove the planet's axial rotation from the stack
-
-    // //---------------------- smaller cube == moon ----------------------
-    // mvStack.push(mvStack.top());
-    // mvStack.top() *= glm::translate(
-    //     glm::mat4(1.0f),
-    //     glm::vec3(
-    //         0.0f,
-    //         std::sin((float)currentTime) * 2.0f,
-    //         std::cos((float)currentTime) * 2.0f
-    //     )
-    // );
-    // mvStack.top() *= glm::rotate(glm::mat4(1.0f), (float)currentTime, glm::vec3(0.0f, 0.0f, 1.0f)); // moon rotation
-    // mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(0.25f, 0.25f, 0.25f));                   // make the moon smaller
-
-    // glUniformMatrix4fv(mvLocation, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
-    // glUniformMatrix4fv(pLocation, 1, GL_FALSE, glm::value_ptr(pMatrix));
-    // glBindBuffer(GL_ARRAY_BUFFER, vbos[0]);
-
-    // glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
-    // glEnableVertexAttribArray(0);
-    // glDrawArrays(GL_TRIANGLES, 0, 36);
-
-    // Remove moon scale/rotation/position, planet position,
-    // sun position, and view matrices from stack.
-    // mvStack.pop();
-    // mvStack.pop();
-    // mvStack.pop();
-    // mvStack.pop();
 
     glUniformMatrix4fv(mvLocation, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
     glUniformMatrix4fv(pLocation, 1, GL_FALSE, glm::value_ptr(pMatrix));
