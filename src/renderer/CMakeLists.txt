@@ -1,6 +1,6 @@
 # Define the Renderer lib
 
-file (GLOB_RECURSE RENDERER_SOURCES "*.cpp" "*.h")
+file(GLOB_RECURSE RENDERER_SOURCES "*.cpp" "*.h")
 
 if (RENDERER_SOURCES)
     add_library(Renderer ${RENDERER_SOURCES})
