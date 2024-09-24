@@ -13,6 +13,7 @@ find_package(glm REQUIRED)
 add_subdirectory(src/core)
 add_subdirectory(src/renderer)
 add_subdirectory(src/util)
+add_subdirectory(src/shapes)
 
 # Add the main executable
 add_executable(${PROJECT_NAME} src/main.cpp)
@@ -22,6 +23,7 @@ target_link_libraries(${PROJECT_NAME}
     Core
     Renderer
     Util
+    Shapes
     GLEW::GLEW
     glfw
     OpenGL::GL
@@ -33,4 +35,5 @@ target_include_directories(${PROJECT_NAME} PRIVATE
     src/core
     src/renderer
     src/util
+    src/shapes
 )
