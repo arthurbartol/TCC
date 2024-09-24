@@ -12,6 +12,11 @@ Sphere::Sphere(int precision)
     init(precision);
 }
 
+float Sphere::toRadians(float degrees)
+{
+    return (degrees * 2.0f * 3.14159f) / 360.0f;
+}
+
 void Sphere::init(int precision)
 {
     numVertices = (precision + 1) * (precision + 1);
@@ -42,9 +47,4 @@ void Sphere::init(int precision)
             indices[6 * (i * precision + j) + 5] = (i + 1) * (precision + 1) + j;
         }
     }
-}
-
-float Sphere::toRadians(float degrees)
-{
-    return (degrees * 2.0f * 3.14159f) / 360.0f;
 }

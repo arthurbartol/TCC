@@ -21,7 +21,9 @@ public:
     ~Sphere() = default;
 
     Sphere(int precision);
-
-    void init(int precision);
+    
     float toRadians(float degrees);
+
+private:
+    void init(int precision);
 };
