@@ -17,6 +17,7 @@ public:
     std::vector<glm::vec3> normals;
     std::vector<glm::vec2> texCoords;
 
+    Sphere();
     Sphere(int precision);
 
     float toRadians(float degrees);
