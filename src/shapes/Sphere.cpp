@@ -34,6 +34,21 @@ void Sphere::init(int precision)
         indices.push_back(0);
     }
 
+    // Calculate triangle vertices
+    for (int i = 0; i <= precision; i++)
+    {
+        for (int j = 0; j <= precision; j++)
+        {
+            float y =  (float)std::cos(toRadians(180.0f - i * 180.0f / precision));
+            float x = -(float)std::cos(toRadians(j * 360.0f / precision)) * (float)std::abs(std::cos(std::asin(y)));
+            float z =  (float)std::sin(toRadians(j * 360.0f / precision)) * (float)std::abs(std::cos(std::asin(y)));
+
+            vertices [i * (precision + 1) + j] = glm::vec3(x, y, z);
+            normals  [i * (precision + 1) + j] = glm::vec3(x, y, z);
+            texCoords[i * (precision + 1) + j] = glm::vec2((float)j / precision, (float)i / precision);
+        }
+    }
+
     // Calculate triangle indices
     for (int i = 0; i < precision; i++)
     {
